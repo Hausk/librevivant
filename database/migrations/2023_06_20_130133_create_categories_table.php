@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
 
 return new class extends Migration
 {
@@ -14,10 +15,18 @@ return new class extends Migration
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->string('sub-title');
+            $table->string('slug')->unique();
+            $table->string('year');
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
+        // Générer les slugs pour les enregistrements existants
+        $categories = \App\Models\Category::all();
+        foreach ($categories as $category) {
+            $slug = Str::slug($category->annee . '-' . $category->titre);
+            $category->slug = $slug;
+            $category->save();
+        }
     }
 
     /**
@@ -25,6 +34,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('images');
+        Schema::dropIfExists('categories');
     }
 };

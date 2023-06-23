@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -14,9 +15,9 @@ class WorksController extends Controller
      */
     public function index(): Response
     {
-        $users = User::all();
+        $categories = Category::all();
         return Inertia::render('Works', [
-            'users' => $users,
+            'categories' => $categories,
         ]);
     }
 }

@@ -1,10 +1,10 @@
 <template>
     <div class="carousel">
-        <div class="carousel-item" v-for="user in users" :key="user.id" ref="carouselItems">
+        <div class="carousel-item" v-for="category in categories" :key="category.id" ref="carouselItems"  @click="handleOnClick(e, category.slug)">
             <div class="carousel-box">
-                <div class="title">{{ user.name }}</div>
-                <div class="num">2023</div>
-                <img :src="getRandomImage()" />
+                <div class="title">{{ category.title }}</div>
+                <div class="num">{{ category.year }}</div>
+                <img :src="getRandomImage()"/>
             </div>
         </div>
     </div>
@@ -13,15 +13,15 @@
 import { ref, onMounted, onUnmounted } from 'vue';
 
 const props = defineProps({
-        users: {
+        categories: {
             type: Array,
             required: true,
         }
     })
-let progress = 0;
 let startX = 0;
 let active = 0;
 let isDown = false;
+let progress = 0;
 
 const speedWheel = 1;
 const speedDrag = -0.1;
@@ -54,9 +54,12 @@ const animate = () => {
 const handleWheel = (e) => {
   const wheelDeltaX = e.deltaX || 0;
   const wheelDeltaY = e.deltaY || 0;
-
-  // Vous pouvez ajuster les coefficients de vitesse selon vos besoins
-  const wheelProgress = Math.sign(wheelDeltaX + wheelDeltaY) * (speedWheel / $items.value.length);
+  let wheelProgress = 0;
+  if (wheelDeltaY > 0) {
+    wheelProgress = 1;
+  } else {
+    wheelProgress = -1;
+  }
 
   progress += wheelProgress;
   animate();
@@ -105,6 +108,14 @@ const handleKeyDown = (e) => {
         animate();
     }
 }
+const handleOnClick = (e, slug) => {
+  const imageElement = e.target.parentElement;
+  imageElement.classList.add('zoom-in');
+  setTimeout(() => {
+    // Rediriger vers la page souhaitée
+    inertia.visit(`/${slug}`);
+  }, 500);
+};
 
 onMounted(() => {
   $items.value = Array.from(document.querySelectorAll(".carousel-item"));
@@ -143,10 +154,26 @@ onUnmounted(() => {
 </script>
 
 <style>
+.zoom-in {
+  animation: zoomIn 0.5s forwards;
+}
+
+@keyframes zoomIn {
+  from {
+  }
+  to {
+    width: 100%;
+    height: 100%;
+    transform: translate(0px, 0px);
+    margin: 0;
+    top: 0;
+    left: 0;
+  }
+}
 body {
   overflow: hidden;
   font-family: "Roboto", serif;
-  background: linear-gradient(135deg, black, #220033);
+  background: linear-gradient(135deg, black, #c23616);
 }
 
 .carousel {

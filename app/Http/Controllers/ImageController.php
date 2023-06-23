@@ -55,7 +55,9 @@ class ImageController extends Controller
      */
     public function show(Image $image)
     {
-        //
+        return Inertia::render('Images', [
+            'image' => $image,
+        ]);
     }
 
     /**
