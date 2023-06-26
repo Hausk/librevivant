@@ -21,7 +21,7 @@ class CreateFilepondsTable extends Migration
             $table->string('mimetypes', 100);
             $table->string('disk', 100);
             $table->unsignedTinyInteger('created_by')->nullable();
-            $table->unsignedSmallInteger('category')->nullable();
+            $table->unsignedSmallInteger('category_id')->nullable();
             $table->dateTime('expires_at')->nullable();
             $table->softDeletes();
             $table->timestamps();

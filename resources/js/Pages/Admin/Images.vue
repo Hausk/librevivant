@@ -36,7 +36,7 @@ const handleProcessFile = (error, file) => {
 }
 
 const sendForm = async () => {
-    await axios.post('/api/images', {
+    await axios.post('/api/send-form', {
         gallery: gallery.value,
     })
         .then((res) => {

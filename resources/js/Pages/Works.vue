@@ -1,4 +1,5 @@
 <template>
+    <Head title="Works" />
     <div class="carousel">
         <div class="carousel-item" v-for="category in categories" :key="category.id" ref="carouselItems"  @click="handleOnClick(category.slug, $event)">
             <div class="carousel-box">
@@ -11,7 +12,7 @@
 </template>
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
-import { router } from '@inertiajs/vue3';
+import { router, Head } from '@inertiajs/vue3';
 
 const props = defineProps({
         categories: {
@@ -114,7 +115,7 @@ const handleOnClick = (slug, event) => {
   imageElement.classList.add('zoom-in');
   setTimeout(() => {
     // Rediriger vers la page souhaitée
-    router.visit('/' + slug, {
+    router.visit('/work/' + slug, {
         onStart: visit => {
             console.log('TEST')
         },
