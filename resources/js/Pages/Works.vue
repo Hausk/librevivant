@@ -1,6 +1,6 @@
 <template>
     <div class="carousel">
-        <div class="carousel-item" v-for="category in categories" :key="category.id" ref="carouselItems"  @click="handleOnClick(e, category.slug)">
+        <div class="carousel-item" v-for="category in categories" :key="category.id" ref="carouselItems"  @click="handleOnClick(category.slug, $event)">
             <div class="carousel-box">
                 <div class="title">{{ category.title }}</div>
                 <div class="num">{{ category.year }}</div>
@@ -11,6 +11,7 @@
 </template>
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
+import { router } from '@inertiajs/vue3';
 
 const props = defineProps({
         categories: {
@@ -108,12 +109,19 @@ const handleKeyDown = (e) => {
         animate();
     }
 }
-const handleOnClick = (e, slug) => {
-  const imageElement = e.target.parentElement;
+const handleOnClick = (slug, event) => {
+  const imageElement = event.target.parentElement;
   imageElement.classList.add('zoom-in');
   setTimeout(() => {
     // Rediriger vers la page souhaitée
-    inertia.visit(`/${slug}`);
+    router.visit('/' + slug, {
+        onStart: visit => {
+            console.log('TEST')
+        },
+        onSuccess: page => {
+            console.log('FINI')
+        }
+    })
   }, 500);
 };
 
