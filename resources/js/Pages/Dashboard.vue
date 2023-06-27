@@ -1,7 +1,8 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import { useForm } from "@inertiajs/vue3";
 import { Head } from '@inertiajs/vue3';
-import {ref} from "vue";
+import { ref } from "vue";
 import vueFilePond, { setOptions } from "vue-filepond";
 import "filepond/dist/filepond.min.css";
 import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css";
@@ -9,41 +10,61 @@ import FilePondPluginFileValidateType from "filepond-plugin-file-validate-type";
 import FilePondPluginImagePreview from "filepond-plugin-image-preview";
 import axios from "axios";
 
+const props = defineProps({
+        categories: {
+            type: Array,
+            required: true,
+        }
+    })
+const selectedCategory = ref()
+const filepondGalleryInput = ref(null); // Reference the input to clear the files later
+
 const FilePond = vueFilePond(
     FilePondPluginFileValidateType,
     FilePondPluginImagePreview
 );
 
-const gallery = ref([]);
-
+const form = useForm({
+    category: '',
+    gallery: [],
+});
+const submit = () => {
+    form
+        .transform((data) => {
+            return {
+                ...data,
+                gallery: data.gallery.map(item => item.serverId) // Pluck only the serverIds
+            }
+        })
+        .put(route('upload-images'), {
+            onStart: () => {
+                console.log(form);
+            },
+            onSuccess: () => {
+                filepondGalleryInput.value.removeFiles();
+            },
+        });
+};
+// Set global options on filepond init
 const handleFilePondInit = () => {
-    console.log("FilePond has initialized");
-
     setOptions({
+        credits: false,
         server: {
             url: '/filepond',
             headers: {
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-            },
-        },
+            }
+        }
     });
-}
+};
 
-const handleProcessFile = (error, file) => {
-    gallery.value.push(file.serverId);
-    console.log(gallery);
-}
-
-const sendForm = async () => {
-    await axios.post('/api/send-form', {
-        gallery: gallery.value,
-    })
-        .then((res) => {
-            console.log(res);
-        })
-        .catch((err) => {
-            console.log(err)
-        });
+// Set the server id from response
+const handleFilePondGalleryProcess = (error, file) => {
+    form.gallery.push({id: file.id, serverId: file.serverId});
+};
+// Remove the server id on file remove
+const handleFilePondGalleryRemoveFile = (error, file) => {
+    form.gallery = form.gallery.filter(item => item.id !== file.id);
 }
 
 </script>
@@ -56,22 +77,37 @@ const sendForm = async () => {
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Dashboard</h2>
         </template>
 
-        <form v-on:submit.prevent="sendForm">
-            <file-pond
-                name="test"
-                ref="pond"
-                label-idle="Drop files here..."
-                v-bind:allow-multiple="true"
-                accepted-file-types="image/jpeg, image/png"
-                v-on:processfile="handleProcessFile"
-                v-on:init="handleFilePondInit"
+        <form @submit.prevent="submit">
+            <div>
+                <label class="block font-medium text-sm text-gray-700">
+                    <span>Name</span>
+                </label>
+                <select v-model="form.category" name="category">
+                    <option v-for="category in categories" :value="category.id" :key="category.id">
+                        {{ category.title }}
+                    </option>
+                </select>
+                <div v-if="form.errors.category" class="text-red-500">{{ form.errors.category }}</div>
+            </div>
+            <label class="block font-medium text-sm text-gray-700">
+                <span>Gallery</span>
+            </label>
+            <FilePond
+                name="gallery"
+                ref="filepondGalleryInput"
+                class-name="my-pond"
+                allow-multiple="true"
+                accepted-file-types="image/*"
+                @init="handleFilePondInit"
+                @processfile="handleFilePondGalleryProcess"
+                @removefile="handleFilePondGalleryRemoveFile"
             />
-            <p>
-            <input
+            <button
                 type="submit"
-                value="Submit"
+                class="inline-flex items-center justify-center mt-3 p-3 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:ring focus:ring-gray-300 disabled:opacity-25 transition w-full"
             >
-        </p>
+                Submit
+            </button>
         </form>
     </AuthenticatedLayout>
 </template>

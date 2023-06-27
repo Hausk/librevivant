@@ -4,37 +4,27 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateFilepondsTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
-        Schema::create('fileponds', function (Blueprint $table) {
-            $table->id();
+        Schema::create('images', function (Blueprint $table) {
             $table->string('filename');
             $table->string('filepath');
-            $table->string('extension', 100);
-            $table->string('mimetypes', 100);
-            $table->string('disk', 100);
             $table->unsignedTinyInteger('created_by')->nullable();
             $table->unsignedSmallInteger('category_id')->nullable();
-            $table->dateTime('expires_at')->nullable();
-            $table->softDeletes();
             $table->timestamps();
         });
     }
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
-        Schema::dropIfExists('fileponds');
+        Schema::dropIfExists('images');
     }
-}
+};

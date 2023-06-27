@@ -3,9 +3,14 @@
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\WorksController;
+use App\Models\Category;
+use App\Models\Image;
 use Illuminate\Foundation\Application;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
+use RahulHaque\Filepond\Facades\Filepond;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,7 +33,10 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
+    $categories = Category::all();
+    return Inertia::render('Dashboard', [
+        'categories' => $categories,
+    ]);
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
@@ -43,4 +51,49 @@ Route::middleware('auth')->group(function () {
 });
 Route::get('/works', [WorksController::class, 'index']);
 Route::get('/work/{slug}', [WorksController::class, 'show']);
+Route::put('/admin/upload', function (Request $request) {
+    // Validate the submitted fields
+    // Put this in Request class
+    // or Controller method
+    $request->validate([
+        'category' => 'required|max:100',
+        'gallery' => 'required',
+        'gallery.*' => [
+            'required',
+            Rule::filepond([
+                'max:50000',
+                'image:jpeg,png',
+            ]),
+        ],
+    ]);
+
+    // Process the files using Filepond package
+    // and move them to your preferred storage
+    // i.e. "./storage/app/public/avatars"
+    // dd($fileInfo) or dd($galleryInfo)
+    $fileName = time() + auth()->id();
+    $galleries = Filepond::field($request->gallery)->moveTo('galleries/' . $fileName);
+    $category = $request->category;
+    foreach ($galleries as $gallery) {
+        $image = new Image();
+        $image->filename = $gallery['basename'];
+        $image->filepath = $gallery['location'];
+        $image->created_by = auth()->id();
+        $image->category_id = $category;
+        $image->save();
+    }
+
+
+    // Save the gallery here
+    // It's your job
+    // dd($galleryInfo);
+
+    // Do your chores and done
+    session()->flash('flash', [
+        'bannerStyle' => 'success',
+        'banner' => 'Profile information updated successfully!',
+    ]);
+
+    return redirect()->back();
+})->name('upload-images');
 require __DIR__.'/auth.php';

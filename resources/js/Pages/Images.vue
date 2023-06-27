@@ -1,9 +1,9 @@
 <template>
   <Head title="Images" />
   <h1>Test</h1>
-    <div class="carousel-item" v-for="image in images" :key="image.id" ref="carouselItems">
+    <div class="carousel-item" v-for="image in images" ref="carouselItems">
           <div class="carousel-box">
-              <img src="@vite"/>
+              <img :src="imageUrl(image.filename)"/>
           </div>
     </div>
 </template>
@@ -11,6 +11,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
 import { router, Head } from '@inertiajs/vue3';
+import { assert } from '@vue/compiler-core';
 
 const props = defineProps({
 	images: {
@@ -18,6 +19,9 @@ const props = defineProps({
 		required: true,
 	}
 })
+const imageUrl = (url) => {
+    return ('/storage/galleries/' + url);
+}
 
 </script>
 

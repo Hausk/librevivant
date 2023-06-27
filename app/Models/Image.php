@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Image extends Model
 {
     use HasFactory;
+    protected $fillable = ['filename', 'filepath', 'created_by', 'category_id'];
+    protected $table = 'images';
 
     public function user(): BelongsTo
     {

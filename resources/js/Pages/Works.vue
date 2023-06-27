@@ -1,7 +1,7 @@
 <template>
     <Head title="Works" />
     <div class="carousel">
-        <div class="carousel-item" v-for="category in categories" :key="category.id" ref="carouselItems"  @click="handleOnClick(category.slug, $event)">
+        <div class="carousel-item" v-for="category in categories" :key="category.id" ref="carouselItems"  @click="handleOnClick(category.slug, $event)" @keyup.Enter="handleOnEnter(category.slug)">
             <div class="carousel-box">
                 <div class="title">{{ category.title }}</div>
                 <div class="num">{{ category.year }}</div>
@@ -125,30 +125,33 @@ const handleOnClick = (slug, event) => {
     })
   }, 500);
 };
+const handleOnEnter = (slug) => {
+    console.log('Test');
+}
 
 onMounted(() => {
-  $items.value = Array.from(document.querySelectorAll(".carousel-item"));
-  $cursors.value = Array.from(document.querySelectorAll(".cursor"));
-  document.addEventListener("mousewheel", handleWheel);
-  document.addEventListener("mousedown", handleMouseDown);
-  document.addEventListener("mousemove", handleMouseMove);
-  document.addEventListener("mouseup", handleMouseUp);
-  document.addEventListener("touchstart", handleMouseDown);
-  document.addEventListener("touchmove", handleMouseMove);
-  document.addEventListener("touchend", handleMouseUp);
-  document.addEventListener("keydown", handleKeyDown);
+    $items.value = Array.from(document.querySelectorAll(".carousel-item"));
+    $cursors.value = Array.from(document.querySelectorAll(".cursor"));
+    document.addEventListener("mousewheel", handleWheel);
+    document.addEventListener("mousedown", handleMouseDown);
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
+    document.addEventListener("touchstart", handleMouseDown);
+    document.addEventListener("touchmove", handleMouseMove);
+    document.addEventListener("touchend", handleMouseUp);
+    document.addEventListener("keydown", handleKeyDown);
     animate()
 });
 
 onUnmounted(() => {
-  document.removeEventListener("mousewheel", handleWheel);
-  document.removeEventListener("mousedown", handleMouseDown);
-  document.removeEventListener("mousemove", handleMouseMove);
-  document.removeEventListener("mouseup", handleMouseUp);
-  document.removeEventListener("touchstart", handleMouseDown);
-  document.removeEventListener("touchmove", handleMouseMove);
-  document.removeEventListener("touchend", handleMouseUp);
-  document.removeEventListener("keydown", handleKeyDown);
+    document.removeEventListener("mousewheel", handleWheel);
+    document.removeEventListener("mousedown", handleMouseDown);
+    document.removeEventListener("mousemove", handleMouseMove);
+    document.removeEventListener("mouseup", handleMouseUp);
+    document.removeEventListener("touchstart", handleMouseDown);
+    document.removeEventListener("touchmove", handleMouseMove);
+    document.removeEventListener("touchend", handleMouseUp);
+    document.removeEventListener("keydown", handleKeyDown);
 });
     const url = [
         'https://media.istockphoto.com/id/949299844/it/foto/vista-prospettica-dellesterno-delledificio-contemporaneo.jpg?s=612x612&w=0&k=20&c=_DR1aRHuTEV3EYBJo1ZXq1pF4SgwB9EVWQLaBj4sC5g=',

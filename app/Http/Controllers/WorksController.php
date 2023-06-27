@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Image;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 use RahulHaque\Filepond\Models\Filepond;
@@ -22,9 +23,11 @@ class WorksController extends Controller
             'categories' => $categories,
         ]);
     }
-    public function show(): Response
+    public function show(string $slug): Response
     {
-        $images = Filepond::all();
+        //$images = Image::all();
+        $categoryId = DB::table('categories')->where('slug', $slug)->value('id');
+        $images = DB::table('images')->where('category_id', $categoryId)->get();
         return Inertia::render('Images', [
             'images' => $images,
         ]);
