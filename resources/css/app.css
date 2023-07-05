@@ -6,7 +6,8 @@
     font-family: Roboto;
     src: url('./fonts/Roboto-Regular.ttf');
 }
-
 body {
-    font-family: 'Roboto' !important;
+    min-height: 100vh;
+    font-family: "Roboto", serif;
+    background: linear-gradient(125deg, #222, #202020);
 }

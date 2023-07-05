@@ -18,7 +18,7 @@ class WorksController extends Controller
      */
     public function index(): Response
     {
-        $categories = Category::all();
+        $categories = Category::with('pinnedImage')->get();
         return Inertia::render('Works', [
             'categories' => $categories,
         ]);
@@ -26,10 +26,11 @@ class WorksController extends Controller
     public function show(string $slug): Response
     {
         //$images = Image::all();
-        $categoryId = DB::table('categories')->where('slug', $slug)->value('id');
-        $images = DB::table('images')->where('category_id', $categoryId)->get();
+        $category = DB::table('categories')->where('slug', $slug)->get();
+        $images = DB::table('images')->where('category_id', $category->value('id'))->get();
         return Inertia::render('Images', [
             'images' => $images,
+            'category' => $category[0],
         ]);
     }
 }

@@ -18,6 +18,11 @@
         "vue": "^3.2.41"
     },
     "dependencies": {
+        "@fortawesome/fontawesome-svg-core": "^6.4.0",
+        "@fortawesome/free-brands-svg-icons": "^6.4.0",
+        "@fortawesome/free-regular-svg-icons": "^6.4.0",
+        "@fortawesome/free-solid-svg-icons": "^6.4.0",
+        "@fortawesome/vue-fontawesome": "^3.0.3",
         "@vitejs/plugin-vue": "^4.2.3",
         "filepond": "^4.30.4",
         "filepond-plugin-file-validate-type": "^1.2.8",

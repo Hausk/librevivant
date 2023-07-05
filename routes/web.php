@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Dashboard;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\WorksController;
@@ -48,6 +49,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/dashboard/admin/home', [Dashboard::class, 'home'])->name('admin.home');
+    Route::get('/dashboard/admin/categories', [Dashboard::class, 'categories'])->name('admin.categories');
 });
 Route::get('/works', [WorksController::class, 'index']);
 Route::get('/work/{slug}', [WorksController::class, 'show']);
@@ -83,17 +86,6 @@ Route::put('/admin/upload', function (Request $request) {
         $image->save();
     }
 
-
-    // Save the gallery here
-    // It's your job
-    // dd($galleryInfo);
-
-    // Do your chores and done
-    session()->flash('flash', [
-        'bannerStyle' => 'success',
-        'banner' => 'Profile information updated successfully!',
-    ]);
-
-    return redirect()->back();
+    return redirect()->back()->with('message', 'Les images ont été envoyées');
 })->name('upload-images');
 require __DIR__.'/auth.php';

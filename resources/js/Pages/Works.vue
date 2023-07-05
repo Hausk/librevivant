@@ -1,29 +1,36 @@
 <template>
     <Head title="Works" />
-    <div class="carousel">
-        <div class="carousel-item" v-for="category in categories" :key="category.id" ref="carouselItems"  @click="handleOnClick(category.slug, $event)" @keyup.Enter="handleOnEnter(category.slug)">
-            <div class="carousel-box">
+    <NavBar class="absolute w-full z-10"/>
+    <div class="carousel overflow-hidden h-screen">
+        <div class="carousel-item" v-for="(category, index) in categories" :key="category.id" ref="carouselItems"  @click="handleOnClick(category.slug, $event)" :data-slug="category.slug">
+            <div class="carousel-box cursor-pointer">
                 <div class="title">{{ category.title }}</div>
                 <div class="num">{{ category.year }}</div>
-                <img :src="getRandomImage()"/>
+                <img v-if="category.pinned_image" :src="imageUrl(category.pinned_image.filepath)" alt="Pinned Image"/>
+                <img v-else :src="getRandomImage()"/>
             </div>
         </div>
+    </div>
+    <div class="absolute bottom-0 left-0 counter">
+        <p class="text-white">{{ progressRef + 1}} | {{ categories.length }}</p>
     </div>
 </template>
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
 import { router, Head } from '@inertiajs/vue3';
+import NavBar from './../Components/Navbar.vue';
 
 const props = defineProps({
-        categories: {
-            type: Array,
-            required: true,
-        }
-    })
+    categories: {
+        type: Array,
+        required: true,
+    }
+})
 let startX = 0;
 let active = 0;
 let isDown = false;
 let progress = 0;
+const progressRef = ref(progress);
 
 const speedWheel = 1;
 const speedDrag = -0.1;
@@ -41,7 +48,7 @@ const displayItems = (item, index, active) => {
   item.style.setProperty("--zIndex", zIndex);
   item.style.setProperty(
     "--active",
-    (index - active) * 1.5 / $items.value.length
+    (index - active) * 0.12
   );
 };
 
@@ -51,20 +58,28 @@ const animate = () => {
 	$items.value.forEach((item, index) =>
 		displayItems(item, index, active)
 	);
+    progressRef.value = progress;
 };
 
 const handleWheel = (e) => {
-  const wheelDeltaX = e.deltaX || 0;
-  const wheelDeltaY = e.deltaY || 0;
-  let wheelProgress = 0;
-  if (wheelDeltaY > 0) {
-    wheelProgress = 1;
-  } else {
-    wheelProgress = -1;
-  }
-
-  progress += wheelProgress;
-  animate();
+    const wheelDelta = e.wheelDelta || 0;
+    let wheelProgress = 0;
+    // si c'est une souris
+    if (wheelDelta == 120 || wheelDelta == 240) {
+        wheelProgress = -1;
+    } else if (wheelDelta == -120 || wheelDelta == -240) {
+        wheelProgress = 1;
+    } else {
+        if (wheelDelta > 1) {
+            //prev
+            wheelProgress = - 1 / 10;
+        } else {
+            // next
+            wheelProgress = 1 / 10;
+        }
+    }
+    progress += wheelProgress;
+    animate();
 };
 
 const threshold = 5; // Valeur seuil de déplacement de la souris
@@ -108,6 +123,19 @@ const handleKeyDown = (e) => {
             progress += - 1;
         }
         animate();
+    } else if (e.key == 'Enter') {
+        var selectedElement = document.querySelector('.carousel-item[style="--zIndex: 10; --active: 0;"]');
+        if (selectedElement) {
+            const slug = selectedElement.getAttribute('data-slug');
+            router.visit('/work/' + slug, {
+                onStart: visit => {
+                    console.log('TEST');
+                },
+                onSuccess: page => {
+                    console.log('FINI');
+                }
+            });
+        };
     }
 }
 const handleOnClick = (slug, event) => {
@@ -126,7 +154,7 @@ const handleOnClick = (slug, event) => {
   }, 500);
 };
 const handleOnEnter = (slug) => {
-    console.log('Test');
+    console.log('TestHandle');
 }
 
 onMounted(() => {
@@ -140,6 +168,7 @@ onMounted(() => {
     document.addEventListener("touchmove", handleMouseMove);
     document.addEventListener("touchend", handleMouseUp);
     document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("handleOnEnter", handleOnEnter);
     animate()
 });
 
@@ -152,6 +181,7 @@ onUnmounted(() => {
     document.removeEventListener("touchmove", handleMouseMove);
     document.removeEventListener("touchend", handleMouseUp);
     document.removeEventListener("keydown", handleKeyDown);
+    document.removeEventListener("handleOnEnter", handleOnEnter);
 });
     const url = [
         'https://media.istockphoto.com/id/949299844/it/foto/vista-prospettica-dellesterno-delledificio-contemporaneo.jpg?s=612x612&w=0&k=20&c=_DR1aRHuTEV3EYBJo1ZXq1pF4SgwB9EVWQLaBj4sC5g=',
@@ -163,9 +193,27 @@ onUnmounted(() => {
     const getRandomImage = () => {
         return url[Math.floor(Math.random() * url.length)];
     };
+    const imageUrl = (url) => {
+        return ('/storage/' + url);
+    }
 </script>
 
 <style>
+.counter {
+  animation: counter-animation 0.3s ease-in-out;
+}
+
+@keyframes counter-animation {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
 .zoom-in {
   animation: zoomIn 0.5s forwards;
 }
@@ -182,27 +230,20 @@ onUnmounted(() => {
     left: 0;
   }
 }
-body {
-  overflow: hidden;
-  font-family: "Roboto", serif;
-  background: linear-gradient(135deg, black, #c23616);
-}
 
 .carousel {
   position: relative;
   z-index: 1;
-  height: 100vh;
-  overflow: hidden;
   pointer-events: none;
 }
 
 .carousel-item {
   --items: 10;
-  --width: clamp(150px, 30vw, 300px);
-  --height: clamp(200px, 40vw, 400px);
-  --x: calc(var(--active) * 800%);
-  --y: calc(var(--active) * 200%);
-  --rot: calc(var(--active) * 160deg);
+  --width: clamp(150px, 30vw, 40vh);
+  --height: clamp(200px, 40vw, 50vh);
+  --x: calc(var(--active) * 900%);
+  --y: calc(var(--active) * 400%);
+  --rot: calc(var(--active) * 150deg);
   --opacity: calc(var(--zIndex) / var(--items) * 3 - 2);
   overflow: hidden;
   position: absolute;
@@ -215,7 +256,7 @@ body {
   left: 50%;
   user-select: none;
   transform-origin: 0% 100%;
-  box-shadow: 0 10px 50px 10px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 1px 20px 1px rgba(255, 0, 0, 0.05);
   background: black;
   pointer-events: all;
   transform: translate(var(--x), var(--y)) rotate(var(--rot));

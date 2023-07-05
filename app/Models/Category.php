@@ -20,6 +20,7 @@ class Category extends Model
         'title',
         'year',
         'slug',
+        'pinned_image_id',
     ];
 
     public function images(): HasMany {
@@ -27,5 +28,8 @@ class Category extends Model
     }
     public function user(): BelongsTo {
         return $this->belongsTo(User::class);
+    }
+    public function pinnedImage(): BelongsTo {
+        return $this->belongsTo(Image::class, 'pinned_image_id');
     }
 }

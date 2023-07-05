@@ -5,7 +5,14 @@ import { createApp, h } from 'vue';
 import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/vue.m';
-
+/* import the fontawesome core */
+import { library } from '@fortawesome/fontawesome-svg-core'
+/* import font awesome icon component */
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+/* import specific icons */
+import { faLinkedinIn, faFacebook, faInstagram, faTiktok } from '@fortawesome/free-brands-svg-icons'
+import { faEnvelope } from '@fortawesome/free-solid-svg-icons'
+library.add(faLinkedinIn, faFacebook, faInstagram, faTiktok, faEnvelope )
 const appName = window.document.getElementsByTagName('title')[0]?.innerText || 'Laravel';
 
 createInertiaApp({
@@ -19,7 +26,7 @@ createInertiaApp({
               users: [], // Initialisez la variable users avec un tableau vide
             };
           },
-        })
+        }).component('font-awesome-icon', FontAwesomeIcon)
           .use(plugin)
           .use(ZiggyVue, Ziggy);
 

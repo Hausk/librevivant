@@ -12,8 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('images', function (Blueprint $table) {
+            $table->id();
             $table->string('filename');
             $table->string('filepath');
+            $table->string('legend')->nullable();
             $table->unsignedTinyInteger('created_by')->nullable();
             $table->unsignedSmallInteger('category_id')->nullable();
             $table->timestamps();
