@@ -13,7 +13,7 @@
     </div>
     <div class="absolute left-3 bottom-2 w-12 text-lg">
         <p id="index" class="text-white relative w-full">
-          <span id="test">{{ Math.round(progressRef) + 1 }}</span> 
+          <span id="test">{{ Math.round(progressRef) + 1 }}</span>
         </p>
         <hr class="text-white m-auto whitespace-nowrap"/>
 		<p class="text-white m-auto whitespace-nowrap text-end">{{ categories.length }}</p>
@@ -200,7 +200,9 @@ const handleOnClick = (slug, event) => {
 		progress += - difference;
 	}
 	animate();
-  /*imageElement.classList.add('zoom-in');
+  setTimeout(() => {
+    imageElement.classList.add('zoom-in');
+  } , 300);
   setTimeout(() => {
     // Rediriger vers la page souhaitée
     router.visit('/work/' + slug, {
@@ -211,7 +213,7 @@ const handleOnClick = (slug, event) => {
             console.log('FINI')
         }
     })
-  }, 500);*/
+  }, 900);
 };
 const handleOnEnter = (slug) => {
     console.log('TestHandle');
