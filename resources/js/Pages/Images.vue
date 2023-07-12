@@ -2,8 +2,8 @@
     <NavBar />
   <Head title="Images" />
   <h1 class="text-white text-4xl text-center py-10">{{ category.title }}, {{ category.year }}</h1>
-  <main class="container m-auto mb-10 columns-3" :class="columns">
-    <img v-for="image in images" :src="imageUrl(image.filename)" class="w-full mb-3 gap-3 "/>
+  <main class="container m-auto mb-10" :class="columns">
+    <img v-for="image in images" :src="imageUrl(image.filename)" class="w-full mb-3 gap-3 m-auto"/>
   </main>
 </template>
 

@@ -11,14 +11,29 @@
             </div>
         </div>
     </div>
-    <div class="absolute bottom-0 left-0 counter">
-        <p class="text-white">{{ progressRef + 1}} | {{ categories.length }}</p>
+    <div class="absolute left-3 bottom-2 w-12 text-lg">
+        <p id="index" class="text-white relative w-full">
+          <span id="test">{{ Math.round(progressRef) + 1 }}</span> 
+        </p>
+        <hr class="text-white m-auto whitespace-nowrap"/>
+		<p class="text-white m-auto whitespace-nowrap text-end">{{ categories.length }}</p>
     </div>
 </template>
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted, reactive, watch } from 'vue';
 import { router, Head } from '@inertiajs/vue3';
+import gsap from 'gsap'
 import NavBar from './../Components/Navbar.vue';
+
+const url = [
+        'https://media.istockphoto.com/id/949299844/it/foto/vista-prospettica-dellesterno-delledificio-contemporaneo.jpg?s=612x612&w=0&k=20&c=_DR1aRHuTEV3EYBJo1ZXq1pF4SgwB9EVWQLaBj4sC5g='
+    ];
+    const getRandomImage = () => {
+        return url[0];
+    };
+    const imageUrl = (url) => {
+        return ('/storage/' + url);
+    }
 
 const props = defineProps({
     categories: {
@@ -34,6 +49,15 @@ const progressRef = ref(progress);
 
 const speedWheel = 1;
 const speedDrag = -0.1;
+
+const disabled = ref(false);
+
+function animateIndex() {
+	disabled.value = true
+	setTimeout(() => {
+		disabled.value = false
+	}, 500)
+}
 
 const getZindex = (array, index) =>
   array.map((_, i) =>
@@ -59,27 +83,44 @@ const animate = () => {
 		displayItems(item, index, active)
 	);
     progressRef.value = progress;
+	if (progressRef.value > 0 && progress < $items.value.length + 1) {
+		gsap.fromTo('#test', { left: "2rem", opacity: "0", duration: 0.5, ease: "none"} ,{ left: "0", opacity: "1", duration: 0.5, ease: "none" })
+	}
 };
 
 const handleWheel = (e) => {
     const wheelDelta = e.wheelDelta || 0;
     let wheelProgress = 0;
     // si c'est une souris
-    if (wheelDelta == 120 || wheelDelta == 240) {
-        wheelProgress = -1;
-    } else if (wheelDelta == -120 || wheelDelta == -240) {
-        wheelProgress = 1;
-    } else {
-        if (wheelDelta > 1) {
-            //prev
-            wheelProgress = - 1 / 10;
-        } else {
-            // next
-            wheelProgress = 1 / 10;
-        }
-    }
-    progress += wheelProgress;
-    animate();
+	if (wheelDelta == 120 || wheelDelta == 240) {
+		if(progress != 0) {
+			wheelProgress = -1;
+    		progress += wheelProgress;
+    		animate();
+		}
+	} else if (wheelDelta == -120 || wheelDelta == -240) {
+		if(progress != $items.value.length - 1) {
+			wheelProgress = 1;
+    		progress += wheelProgress;
+    		animate();
+		}
+	} else {
+		if (wheelDelta > 1) {
+			//prev
+			if(progress != 0) {
+				wheelProgress = - 1 / 10;
+    			progress += wheelProgress;
+    			animate();
+			}
+		} else {
+			// next
+			if(progress != $items.value.length - 1) {
+				wheelProgress = 1 / 10;
+				progress += wheelProgress;
+    			animate();
+			}
+		}
+	}
 };
 
 const threshold = 5; // Valeur seuil de déplacement de la souris
@@ -95,14 +136,16 @@ const handleMouseMove = (e) => {
   const mouseProgress = (x - startX) * speedDrag;
 
   if (mouseProgress > threshold) {
-    progress += 1; // Incrémenter progress de 1 lorsque glisser de gauche à droite
-    startX = x; // Mettre à jour la position initiale
+	if (progress != $items.value.length - 1) {
+		progress += 1; // Incrémenter progress de 1 lorsque glisser de gauche à droite
+		startX = x; // Mettre à jour la position initiale
+  		animate();
+	}
   } else if (mouseProgress < -threshold) {
     progress -= 1; // Décrémenter progress de 1 lorsque glisser de droite à gauche
     startX = x; // Mettre à jour la position initiale
+  	animate();
   }
-
-  animate();
 };
 
 const handleMouseDown = (e) => {
@@ -116,13 +159,15 @@ const handleMouseUp = () => {
 
 const handleKeyDown = (e) => {
     if (e.key === 'ArrowRight' || e.key == "ArrowDown") {
-        progress += 1;
-        animate();
+		if (progress != $items.value.length - 1) {
+			progress += 1;
+			animate();
+		}
     } else if (e.key == 'ArrowLeft' || e.key == 'ArrowUp') {
         if (progress != 0) {
             progress += - 1;
+        	animate();
         }
-        animate();
     } else if (e.key == 'Enter') {
         var selectedElement = document.querySelector('.carousel-item[style="--zIndex: 10; --active: 0;"]');
         if (selectedElement) {
@@ -139,8 +184,23 @@ const handleKeyDown = (e) => {
     }
 }
 const handleOnClick = (slug, event) => {
-  const imageElement = event.target.parentElement;
-  imageElement.classList.add('zoom-in');
+	var imageElement = '';
+	var difference = 0;
+	if (event.target.getAttribute('class') == 'carousel-box cursor-pointer') {
+  		imageElement = event.target.parentElement;
+	} else {
+		imageElement = event.target.parentElement.parentElement;
+	}
+	const zindexValue = imageElement.getAttribute('style').match(/--zIndex:\s*(\d+)/)[1];
+	const activeValue = imageElement.getAttribute('style').match(/--active:\s*([-+]?\d+(\.\d+)?)/)[1];
+	difference = $items.value.length - zindexValue;
+	if (activeValue > 0) {
+		progress += difference;
+	} else {
+		progress += - difference;
+	}
+	animate();
+  /*imageElement.classList.add('zoom-in');
   setTimeout(() => {
     // Rediriger vers la page souhaitée
     router.visit('/work/' + slug, {
@@ -151,7 +211,7 @@ const handleOnClick = (slug, event) => {
             console.log('FINI')
         }
     })
-  }, 500);
+  }, 500);*/
 };
 const handleOnEnter = (slug) => {
     console.log('TestHandle');
@@ -183,39 +243,25 @@ onUnmounted(() => {
     document.removeEventListener("keydown", handleKeyDown);
     document.removeEventListener("handleOnEnter", handleOnEnter);
 });
-    const url = [
-        'https://media.istockphoto.com/id/949299844/it/foto/vista-prospettica-dellesterno-delledificio-contemporaneo.jpg?s=612x612&w=0&k=20&c=_DR1aRHuTEV3EYBJo1ZXq1pF4SgwB9EVWQLaBj4sC5g=',
-        'https://media.istockphoto.com/id/1150545984/it/foto/palazzo-moderno-di-lusso-con-piscina.jpg?s=612x612&w=0&k=20&c=Pbrai_VGc9tUviMCF1UaBErdS1YGyIVWsD29jzMZwTY=',
-        'https://media.istockphoto.com/id/1214351345/it/foto/guardando-direttamente-lo-skyline-del-quartiere-finanziario-nel-centro-di-londra-immagine-di.jpg?s=612x612&w=0&k=20&c=oNNbPzPvcQ-4RA6AeatNIxHQIafBiXmDRtUUY0Ska-I=',
-        'https://media.istockphoto.com/id/904390980/it/foto/foto-di-architettura-contemporanea-astratta.jpg?s=612x612&w=0&k=20&c=_P4Wmx5nq5MeDuimpNklKCBlrLovmCyd9lfiMKeJZDs=',
-        'https://media.istockphoto.com/id/130408311/it/foto/piscina-allesterno-della-casa-moderna-al-crepuscolo.jpg?s=612x612&w=0&k=20&c=ZoVjx7uDjoHKmpM1ayW6UR1SQOoYh_xx-QMG_qeOYs0='
-    ];
-    const getRandomImage = () => {
-        return url[Math.floor(Math.random() * url.length)];
-    };
-    const imageUrl = (url) => {
-        return ('/storage/' + url);
-    }
 </script>
 
 <style>
-.counter {
-  animation: counter-animation 0.3s ease-in-out;
+
+.animatedindex {
+  animation: counter-animation .5s ease-in-out;
 }
 
 @keyframes counter-animation {
   0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.2);
+    left: 12px;
   }
   100% {
-    transform: scale(1);
+    left: 0;
   }
 }
 .zoom-in {
   animation: zoomIn 0.5s forwards;
+  z-index: 110 !important;
 }
 
 @keyframes zoomIn {
@@ -261,6 +307,10 @@ onUnmounted(() => {
   pointer-events: all;
   transform: translate(var(--x), var(--y)) rotate(var(--rot));
   transition: transform 0.8s cubic-bezier(0, 0.02, 0, 1);
+}
+.carousel-item:hover {
+  --y: calc(var(--active) * 300% - 20px);
+  --x: calc(var(--active) * 925%);
 }
 .carousel-item .carousel-box {
   position: absolute;

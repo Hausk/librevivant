@@ -11,3 +11,6 @@ body {
     font-family: "Roboto", serif;
     background: linear-gradient(125deg, #222, #202020);
 }
+.filepond--credits {
+    display: none;
+}

@@ -8,7 +8,6 @@ import "filepond/dist/filepond.min.css";
 import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css";
 import FilePondPluginFileValidateType from "filepond-plugin-file-validate-type";
 import FilePondPluginImagePreview from "filepond-plugin-image-preview";
-import axios from "axios";
 
 const props = defineProps({
         categories: {
@@ -85,10 +84,10 @@ const handleFilePondGalleryRemoveFile = (error, file) => {
             </span>
         </div>
 
-        <form @submit.prevent="submit">
+        <form @submit.prevent="submit" class="container m-auto">
             <div>
                 <label class="block font-medium text-sm text-gray-700">
-                    <span>Name</span>
+                    <span>Catégories</span>
                 </label>
                 <select v-model="form.category" name="category">
                     <option v-for="category in categories" :value="category.id" :key="category.id">
