@@ -14,22 +14,22 @@ const animateAndRedirect = () => {
 
 <template>
     <Head title="Welcome" />
-    <header class="w-screen h-screen flex overflow-hidden">
-        <div id="left-header" class="w-1/4 bg-white h-full flex" :class="{'fullscreen': showAnimation}">
-            <div id="image-left-header">
-            </div>
+    <div class="bg-red-500 w-screen h-screen">
+        <div class="relative w-full h-full">
+            <img class="w-1/2 absolute z-10 bottom-12 xl:top-1/2 right-12" src="./../../img/header/image.jpeg" alt="">
+            <img class="w-1/2 absolute blur-xl invert bottom-10 right-10" src="./../../img/header/image.jpeg" alt="">
         </div>
-        <div id="right-header" class="w-full flex">
-            <div class="content-right-header text-white flex flex-col w-1/2">
-                <h1 class="text-6xl font-bold">Victoria Dos Santos</h1>
-                <h2 class="text-lg font-semibold text-gray-300 my-4">Libre & Vivant</h2>
-                <p class="text-lg font-semibold text-gray-300 mb-10">
-                    Bonjour, je m'appelle Victoria, j'ai fait de la photographie une passion qui permet de rendre les personnes heureuses, de laisser une émotion sur certaines photographies que personne n'arriverait à voir. Aujourd'hui je me présente à vous afin de pouvoir rendre vos moments encore plus magiques et d'en faire des souvenirs inoubliables.
-                </p>
-                <button @click="animateAndRedirect" class="text-lg font-semibold bg-red-500 hover:bg-white hover:text-red-500 rounded-full duration-300 ease-in w-fit m-auto px-5 py-2">Découvrir mon travail</button>
-            </div>
-        </div>
-    </header>
+        <header class="w-full h-full flex absolute top-0">
+                <div class="content-right-header text-white flex flex-col w-5/6">
+                    <h1 class="text-6xl font-bold">Victoria Dos Santos</h1>
+                    <h2 class="text-lg font-semibold text-gray-300 my-4">Libre & Vivant</h2>
+                    <p class="text-lg font-semibold text-gray-300 mb-10">
+                        Bonjour, je m'appelle Victoria, j'ai fait de la photographie une passion qui permet de rendre les personnes heureuses, de laisser une émotion sur certaines photographies que personne n'arriverait à voir. Aujourd'hui je me présente à vous afin de pouvoir rendre vos moments encore plus magiques et d'en faire des souvenirs inoubliables.
+                    </p>
+                    <button @click="animateAndRedirect" class="text-lg font-semibold bg-red-500 hover:bg-white hover:text-red-500 rounded-full duration-300 ease-in w-fit m-auto px-5 py-2">Découvrir mon travail</button>
+                </div>
+        </header>
+    </div>
 </template>
 
 <style>
@@ -65,7 +65,7 @@ body {
 }
 #right-header {
     background-image: url('./../../img/header/image.jpeg');
-    background-size: cover;
+    background-size: 100%;
     background-repeat: no-repeat;
 }
 .content-right-header {
