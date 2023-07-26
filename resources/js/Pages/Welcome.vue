@@ -14,30 +14,69 @@ const animateAndRedirect = () => {
 
 <template>
     <Head title="Welcome" />
-    <div class="bg-slate-700 w-screen h-screen">
-        <div class="relative w-full h-full" style="
-  perspective: 1000px;
-  transform-style: preserve-3d;
-  ">
-            <img class="h-1/3 absolute bottom-10 right-10" src="./../../img/header/image.jpeg" alt="" style="transform: rotateY(-75deg);">
-            <img class="h-1/3 absolute top-10 right-10" src="./../../img/header/image.jpeg" alt="" style="transform: rotateY(-75deg);">
-        </div>
-        <header class="w-full h-full flex absolute top-0">
-                <div class="content-right-header text-white flex flex-col w-5/6">
-                    <h1 class="text-6xl font-bold">Victoria Dos Santos</h1>
+    <div class="bg-white w-screen h-screen">
+        <div class="relative w-full h-full flex desktop" style="
+            perspective: 1000px;
+            transform-style: preserve-3d;
+        ">
+            <div class="left-wall flex">
+                <div class="content-right-header text-white flex flex-col w-2/3 m-auto">
+                    <h1 class="text-6xl font-bold glowing-text">Victoria Dos Santos</h1>
                     <h2 class="text-lg font-semibold text-gray-300 my-4">Libre & Vivant</h2>
                     <p class="text-lg font-semibold text-gray-300 mb-10">
                         Bonjour, je m'appelle Victoria, j'ai fait de la photographie une passion qui permet de rendre les personnes heureuses, de laisser une émotion sur certaines photographies que personne n'arriverait à voir. Aujourd'hui je me présente à vous afin de pouvoir rendre vos moments encore plus magiques et d'en faire des souvenirs inoubliables.
                     </p>
                     <button @click="animateAndRedirect" class="text-lg font-semibold bg-red-500 hover:bg-white hover:text-red-500 rounded-full duration-300 ease-in w-fit m-auto px-5 py-2">Découvrir mon travail</button>
                 </div>
-        </header>
+            </div>
+            <div class="bg-slate-700 right-wall flex">
+                <div class="w-3/5 grid grid-cols-4 grid-rows-5 gap-4 m-auto">
+                    <div class="row-span-1 col-start-1 m-auto row-start-2 p-5 bg-red-800"><img src="../../img/HP/img-1.jpg"/></div>
+                    <div class="row-span-2 col-start-2 row-start-3"><img src="../../img/HP/img-2.jpg"/></div>
+                    <div class="row-span-2 col-start-3 row-start-2"><img src="../../img/HP/img-3.jpg"/></div>
+                    <div class="row-span-3 col-start-4 row-start-2"><img src="../../img/HP/img-4.jpg"/></div>
+                </div>
+            </div>
+            <div class="bg-red-500 sol"></div>
+        </div>
+        <div class="mobile">
+            <h1>TEST</h1>
+        </div>
     </div>
 </template>
 
 <style>
 body {
     overflow: hidden;
+}
+.left-wall {
+    position: absolute;
+    width: 60%;
+    height: 90%;
+    transform: rotateY(45deg);
+    left: -5px;
+    background: url('../../img/HP/stonedwall.png');
+    background-size: 65%;
+    background-position-x: left;
+}
+.right-wall {
+    position: absolute;
+    width: 60%;
+    height: 90%;
+    transform: rotateY(-45deg);
+    right: -5px;
+}
+.sol {
+    background: url('../../img/HP/parquet.png');
+    background-size: 30%;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    transform: rotateX(90deg);
+    top: 40%;
+}
+.glowing-text {
+    text-shadow: 0 0 20px #fff, 0 0 20px #ff0000, 0 0 22px #ff0000, 0 0 25px #ff0000, 0 0 30px #ff0000;
 }
 #left-header {
     position: absolute;
@@ -73,7 +112,6 @@ body {
 }
 .content-right-header {
     text-align: center;
-    margin: auto 10% auto auto;
 }
 .bg-dots-darker {
     background-image: url("data:image/svg+xml,%3Csvg width='30' height='30' viewBox='0 0 30 30' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1.22676 0C1.91374 0 2.45351 0.539773 2.45351 1.22676C2.45351 1.91374 1.91374 2.45351 1.22676 2.45351C0.539773 2.45351 0 1.91374 0 1.22676C0 0.539773 0.539773 0 1.22676 0Z' fill='rgba(0,0,0,0.07)'/%3E%3C/svg%3E");
@@ -83,9 +121,20 @@ body {
     transition: .5s ease-in-out;
     /* Autres styles spécifiques au mode plein écran */
 }
+.mobile {
+    display: none;
+}
 @media (prefers-color-scheme: dark) {
     .dark\:bg-dots-lighter {
         background-image: url("data:image/svg+xml,%3Csvg width='30' height='30' viewBox='0 0 30 30' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1.22676 0C1.91374 0 2.45351 0.539773 2.45351 1.22676C2.45351 1.91374 1.91374 2.45351 1.22676 2.45351C0.539773 2.45351 0 1.91374 0 1.22676C0 0.539773 0.539773 0 1.22676 0Z' fill='rgba(255,255,255,0.07)'/%3E%3C/svg%3E");
+    }
+}
+@media screen and (max-width: 767px) {
+    .mobile {
+        display: block;
+    }
+    .desktop {
+        display: none;
     }
 }
 </style>

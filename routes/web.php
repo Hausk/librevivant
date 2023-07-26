@@ -52,6 +52,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard/admin/home', [Dashboard::class, 'home'])->name('admin.home');
     Route::get('/dashboard/admin/categories', [Dashboard::class, 'categories'])->name('admin.categories');
 });
+Route::get('/test', function() {
+    return Inertia::render('Test', [
+        'test' => 'test',
+    ]);
+});
 Route::get('/works', [WorksController::class, 'index']);
 Route::get('/work/{slug}', [WorksController::class, 'show']);
 Route::put('/admin/upload', function (Request $request) {
