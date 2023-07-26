@@ -461,3 +461,4 @@ onUnmounted(() => {
   --size: 2px;
   transition-duration: 0.7s;
 }
+</style>

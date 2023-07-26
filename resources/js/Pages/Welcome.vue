@@ -14,10 +14,13 @@ const animateAndRedirect = () => {
 
 <template>
     <Head title="Welcome" />
-    <div class="bg-red-500 w-screen h-screen">
-        <div class="relative w-full h-full">
-            <img class="w-1/2 absolute z-10 bottom-12 xl:top-1/2 right-12" src="./../../img/header/image.jpeg" alt="">
-            <img class="w-1/2 absolute blur-xl invert bottom-10 right-10" src="./../../img/header/image.jpeg" alt="">
+    <div class="bg-slate-700 w-screen h-screen">
+        <div class="relative w-full h-full" style="
+  perspective: 1000px;
+  transform-style: preserve-3d;
+  ">
+            <img class="h-1/3 absolute bottom-10 right-10" src="./../../img/header/image.jpeg" alt="" style="transform: rotateY(-75deg);">
+            <img class="h-1/3 absolute top-10 right-10" src="./../../img/header/image.jpeg" alt="" style="transform: rotateY(-75deg);">
         </div>
         <header class="w-full h-full flex absolute top-0">
                 <div class="content-right-header text-white flex flex-col w-5/6">
